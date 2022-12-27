@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import InfoModal from '../components/InfoModal';
 // import Toggle from '../components/Toggle';
 import { getGraph } from '../config/api';
-import graph from '../mocks/graph.json';
 
 interface IAppProps {
     provider: ethers.providers.Web3Provider
@@ -70,7 +69,20 @@ let option = {
             layout: 'none',
             data: [],
             links: [],
-            categories: graph.categories,
+            categories: [
+                {
+                    "name": "inactive_node"
+                },
+                {
+                    "name": "active_node"
+                },
+                {
+                    "name": "my_inactive_node"
+                },
+                {
+                    "name": "my_active_node"
+                }
+            ],
             roam: true,
             cursor: 'pointer',
             edgeSymbol: ['circle', 'arrow'],

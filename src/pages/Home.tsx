@@ -1,13 +1,6 @@
 import { useEthers, useTokenBalance } from "@usedapp/core";
 import { useEffect, useImperativeHandle, useState } from "react";
-import card from "../asserts/card.png";
-import spring from "../asserts/spring.png"
-import exchange from "../asserts/exchange.png"
-import discord from "../asserts/discord.png"
-import notion from "../asserts/notion.png"
-import tokenIcon from "../asserts/icon.png"
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
-import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from "ethers";
 import copy from "copy-to-clipboard";
 import { notification } from "../components/Notiofication";
@@ -15,6 +8,9 @@ import { CONTRACT_ADDRESS } from "../constants/config";
 import { getTrust } from "../config/api";
 import EnsOffline from "../components/EnsOffline";
 import Ens from "../components/Ens";
+import { handleAddToken } from "../utils/web3utils"
+
+import { card, spring, exchange, discord, notion } from "../asserts";
 
 let initFlag = false;
 
@@ -79,72 +75,6 @@ export default function Home(props: IAppProps) {
         setHolderList([]);
     }
 
-    /**
-     * @description: detect wallet 
-     * @param {any} provider provider
-     * @return {*}
-     */
-    const delectWallet = (provider: any): boolean => {
-        if (provider) {
-            if (provider !== window.ethereum) {
-                notification("Do you have multiple wallets installed?");
-                return false;
-            } else {
-                // 优先级更高
-                if (provider.isMathWallet) {
-                    console.log('Ready to connect to MathWallet.');
-                    return true;
-                }
-                if (provider.isMetaMask) {
-                    console.log('Ready to connect to MetaMask.');
-                    return true;
-                }
-                notification("Please install MetaMask!");
-                return false;
-            }
-        } else {
-            notification("Please install MetaMask!");
-            return false;
-        }
-    }
-
-    /**
-     * @description: add token 
-     * @return {*}
-     */
-    const handleAddToken = async () => {
-        if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
-            notification("Please add 0xB1aC1c0f2E7E467f10Df232E82CC65e2CA4Cb0d2 to your mobile wallet", 'top-center', 3)
-            return
-        }
-        const provider: any = await detectEthereumProvider()
-        if (delectWallet(provider)) {
-            if (account) {
-                provider.sendAsync({
-                    method: 'metamask_watchAsset',
-                    params: {
-                        "type": "ERC20",
-                        "options": {
-                            "address": "0xB1aC1c0f2E7E467f10Df232E82CC65e2CA4Cb0d2",
-                            "symbol": "Loopss.me",
-                            "decimals": 18,
-                            "image": tokenIcon,
-                        },
-                    },
-                    id: Math.round(Math.random() * 100000),
-                }, (err: any, added: any) => {
-                    if (err || 'error' in added) {
-                        notification("There was a problem adding the token.")
-                        console.error(err);
-                        return
-                    }
-                    notification("Token added!", "1")
-                })
-            } else {
-                notification("Please connect your wallet first")
-            }
-        }
-    }
 
     /**
      * @description: init trust data 
@@ -204,7 +134,6 @@ export default function Home(props: IAppProps) {
     return (
         <>
             <section className="w-full relative rounded-lg mt-4">
-
                 <div className="mx-auto w-[95%] h-[25vh] max-h-[25vh] bg-center bg-card bg-no-repeat object-contain relative rounded-lg hidden md:block">
                     <div className="absolute left-3 bottom-6 text-white text-xl font-bold">
                         <p>Loopss</p>
@@ -247,7 +176,7 @@ export default function Home(props: IAppProps) {
                         </div>
                     </div>
                 </div>
-                <button className="absolute px-4 py-1 text-sm right-1/10 bottom-4 border-1 border-solid border-black rounded-md" onClick={handleAddToken}>Add Loopss To Wallet</button>
+                <button className="absolute px-4 py-1 text-sm right-1/10 bottom-4 border-1 border-solid border-black rounded-md" onClick={() => handleAddToken(account)}>Add Loopss To Wallet</button>
             </section>
 
             <section className="flex justify-center items-center mt-4">

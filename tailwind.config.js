@@ -2,7 +2,6 @@
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
-    "./node_modules/flowbite/**/*.js"
   ],
   theme: {
     extend: {
@@ -23,11 +22,21 @@ module.exports = {
       },
       backgroundImage: {
         'card': "url('/src/asserts/card.png')",
+      },
+      backgroundColor: {
+        'conmon': '#D9D9D9',
+        'signUp': '#FFCBAD',
+        'in': '#97E9B6',
+        'mint': '#00B3E3',
+        'stop': '#A4A9AD'
+      },
+      colors: {
+        'baseColor': '#666666'
       }
     },
 
   },
   plugins: [
-    require('flowbite/plugin')
+    require('@tailwindcss/forms')
   ]
 }

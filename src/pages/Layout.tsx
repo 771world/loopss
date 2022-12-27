@@ -2,16 +2,16 @@ import copy from "copy-to-clipboard";
 import { Route, Switch } from 'react-router'
 import { BrowserRouter } from 'react-router-dom'
 import { ethers } from "ethers";
-import { useRef } from "react";
+import { lazy, Suspense, useRef } from "react";
 import Header from "../components/Header";
 import { notification } from "../components/Notiofication";
-import Home from "../pages/Home";
-import Graph from "./Graph";
 
+const Home = lazy(() => import('../pages/Home'));
+const Graph = lazy(() => import('./Graph'));
+const Events = lazy(() => import('./Events'));
+const Tokens = lazy(() => import('./Tokens'));
 
 const provider: any = new ethers.providers.JsonRpcProvider('https://eth-mainnet.g.alchemy.com/v2/rbeUGLWOu1aehsuKbaNw_yhVKFXXdwbp');
-
-
 
 export default function Layout() {
 
@@ -42,8 +42,12 @@ export default function Layout() {
                 <div className="container mx-auto px-4">
                     <Header onRef={header} clearData={clearData} provider={provider} />
                     <Switch>
-                        <Route exact path="/" render={(props) => <Home {...props} onRef={home} provider={provider} handleConnect={handleConnect} />} />
-                        <Route exact path="/graph" render={(props) => <Graph {...props} provider={provider} />} />
+                        <Suspense fallback={<div>Loading...</div>}>
+                            <Route exact path="/" render={(props) => <Home {...props} onRef={home} provider={provider} handleConnect={handleConnect} />} />
+                            <Route exact path="/graph" render={(props) => <Graph {...props} provider={provider} />} />
+                            <Route exact path="/events" render={(props) => <Events {...props} provider={provider} />} />
+                            <Route exact path="/tokens" render={(props) => <Tokens {...props} provider={provider} />} />
+                        </Suspense>
                     </Switch>
                 </div>
             </BrowserRouter>
